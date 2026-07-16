@@ -33,7 +33,10 @@ export function PageLoader({ onDone }: { onDone: () => void }) {
       }
     }
     raf = requestAnimationFrame(tick)
-    return () => cancelAnimationFrame(raf)
+    return () => {
+      cancelAnimationFrame(raf)
+      startScroll()
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
