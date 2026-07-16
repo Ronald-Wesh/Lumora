@@ -14,6 +14,10 @@ export function initLenis() {
   return lenis
 }
 
+export function getLenis() {
+  return lenis
+}
+
 export function stopScroll() {
   lockCount++
   lenis?.stop()

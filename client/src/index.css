@@ -29,73 +29,75 @@
   --container-shell: 88rem;
 }
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-html {
-  font-size: 16px;
-  -webkit-font-smoothing: antialiased;
-}
-
-@media (max-width: 1920px) {
-  html { font-size: 0.833333vw; }
-}
-@media (max-width: 1440px) {
-  html { font-size: 1.111111vw; }
-}
-@media (max-width: 1024px) {
-  html { font-size: 1.5625vw; }
-}
-@media (max-width: 640px) {
-  html { font-size: 4.444444vw; }
-}
-
-body {
-  margin: 0;
-  background: var(--color-background);
-  color: var(--color-foreground);
-  font-family: var(--font-sans);
-  overflow-x: hidden;
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-button {
-  font: inherit;
-  color: inherit;
-  background: none;
-  border: none;
-  cursor: pointer;
-}
-
-img {
-  display: block;
-  max-width: 100%;
-}
-
-:focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
   }
-}
 
-html.scroll-locked {
-  position: relative;
-  overflow: hidden;
-  height: 100%;
+  html {
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  @media (max-width: 1920px) {
+    html { font-size: 0.833333vw; }
+  }
+  @media (max-width: 1440px) {
+    html { font-size: 1.111111vw; }
+  }
+  @media (max-width: 1024px) {
+    html { font-size: 1.5625vw; }
+  }
+  @media (max-width: 640px) {
+    html { font-size: 4.444444vw; }
+  }
+
+  body {
+    margin: 0;
+    background: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    overflow-x: hidden;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  button {
+    font: inherit;
+    color: inherit;
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+
+  img {
+    display: block;
+    max-width: 100%;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  html.scroll-locked {
+    position: relative;
+    overflow: hidden;
+    height: 100%;
+  }
 }
 
 @keyframes hero-card-in {
