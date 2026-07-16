@@ -663,5 +663,536 @@ footer{ position:relative; overflow:hidden; border-radius:2rem 2rem 0 0; backgro
   </div>
 </div>
 
+<script type="importmap">
+{ "imports": { "lenis": "https://unpkg.com/lenis@1.3.23/dist/lenis.mjs" } }
+</script>
+<script type="module">
+import Lenis from 'lenis';
+
+/* ---------- adaptive grid ---------- */
+function applyAdaptiveGrid(){
+  const FONT_BASE = 16, baseWidth = 1920, coef = 0.6666;
+  const w = window.innerWidth;
+  const widthReduction = ((baseWidth - w) / baseWidth) * 100;
+  const size = FONT_BASE - (FONT_BASE * (widthReduction * coef)) / 100;
+  if (size > FONT_BASE) document.documentElement.style.fontSize = size + 'px';
+  else document.documentElement.style.removeProperty('font-size');
+}
+applyAdaptiveGrid();
+addEventListener('resize', applyAdaptiveGrid);
+
+/* ---------- lenis ---------- */
+window.scrollTo(0, 0);
+const lenis = new Lenis({ smoothWheel: true });
+function raf(t){ lenis.raf(t); requestAnimationFrame(raf); }
+requestAnimationFrame(raf);
+
+/* ---------- scroll lock ---------- */
+function stopScroll(){ lenis.stop(); document.documentElement.classList.add('scroll-locked'); }
+function startScroll(){ lenis.start(); document.documentElement.classList.remove('scroll-locked'); }
+
+function scrollToId(id){
+  stopScroll();
+  setTimeout(() => {
+    const el = document.getElementById(id);
+    if (el){
+      const top = el.getBoundingClientRect().top + window.pageYOffset;
+      window.scrollTo({ top, behavior: 'smooth' });
+    }
+  }, 50);
+  setTimeout(startScroll, 100);
+}
+
+/* ---------- text reveal builders ---------- */
+function buildLineReveal(el, lines, staggerMs){
+  el.innerHTML = '';
+  lines.forEach((line, i) => {
+    const wrap = document.createElement('span');
+    wrap.className = 'line-wrap';
+    wrap.style.transitionDelay = (i * staggerMs) + 'ms';
+    const inner = document.createElement('span');
+    inner.className = 'line-inner';
+    inner.style.transitionDelay = (i * staggerMs) + 'ms';
+    inner.textContent = line;
+    wrap.appendChild(inner);
+    el.appendChild(wrap);
+  });
+}
+function revealLines(el){
+  el.querySelectorAll('.line-wrap').forEach(w => w.classList.add('in'));
+}
+
+function buildWordReveal(container, segments){
+  container.innerHTML = '';
+  let idx = 0;
+  segments.forEach(seg => {
+    const words = seg.text.split(' ');
+    words.forEach((w, wi) => {
+      const span = document.createElement('span');
+      span.className = 'word';
+      if (seg.muted) span.classList.add('muted-word');
+      span.style.color = seg.muted ? 'var(--muted)' : '';
+      span.style.transitionDelay = (idx * 35) + 'ms';
+      span.textContent = w + (wi < words.length - 1 ? ' ' : '');
+      container.appendChild(span);
+      idx++;
+    });
+  });
+}
+function revealWords(el){
+  el.querySelectorAll('.word').forEach(w => w.classList.add('in'));
+}
+
+/* ---------- content: hero h1 ---------- */
+buildLineReveal(document.getElementById('hero-h1'), ['Bold ideas,', 'shipped with', 'quiet precision'], 120);
+buildLineReveal(document.getElementById('works-h2'), ['Selected Work'], 0);
+buildLineReveal(document.getElementById('services-h2'), ['What we do best'], 0);
+buildLineReveal(document.getElementById('stats-h2'), ['Proof in the work, not the words.'], 0);
+buildLineReveal(document.getElementById('footer-h2'), ["Have a project in mind?", "Let's get to work."], 100);
+buildWordReveal(document.getElementById('about-h2'), [
+  { text: 'We partner with ambitious teams to ship ' },
+  { text: 'digital products, brand systems, and the strategy that holds them together.', muted: true }
+]);
+
+/* ---------- portfolio data ---------- */
+const works = [
+  { name:'Aster Labs', cat:'Branding', year:'2025', desc:"A complete identity and go-to-market system for a fast-moving research startup.", tags:['Branding','Strategy','Design'] },
+  { name:'Nova Finance', cat:'Product', year:'2024', desc:"A finance platform reimagined — clear data, calm interfaces, and effortless flows.", tags:['Product Design','Web App','QA'] },
+  { name:'Helio Studio', cat:'Identity', year:'2023', desc:"A bold visual identity and art direction system built to scale across every surface.", tags:['Brand Identity','Art Direction'] },
+  { name:'Pulse Health', cat:'Mobile', year:'2023', desc:"A wellness app grounded in research, shipped end to end from concept to release.", tags:['Mobile App','UX Research','Development'] },
+];
+const worksGrid = document.getElementById('works-grid');
+works.forEach((w, i) => {
+  const li = document.createElement('li');
+  li.className = 'reveal-up reveal-el';
+  li.dataset.delay = i * 90;
+  li.style.transform = 'translateY(48px)';
+  li.innerHTML = `
+    <a href="#" class="work-card">
+      <div class="work-meta">
+        <span>${w.cat} — ${w.year}</span>
+        <span class="work-badge"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></span>
+      </div>
+      <div class="work-watermark"><svg class="icon" viewBox="0 0 48 48" fill="currentColor"><path d="M24 2c2.2 13.8 7.9 19.6 22 22-14.1 2.4-19.8 8.2-22 22-2.2-13.8-7.9-19.6-22-22 14.1-2.4 19.8-8.2 22-22Z"/></svg></div>
+      <div class="work-bottom">
+        <h3>${w.name}</h3>
+        <p>${w.desc}</p>
+        <div class="work-tags">${w.tags.map(t => `<span class="tag-chip">${t}</span>`).join('')}</div>
+      </div>
+    </a>`;
+  worksGrid.appendChild(li);
+});
+
+/* ---------- services data ---------- */
+const services = [
+  { n:'01', title:'Software Development', desc:'Scalable web & mobile products built to last.' },
+  { n:'02', title:'Product Design', desc:'Interfaces that feel effortless and look sharp.' },
+  { n:'03', title:'Quality Assurance', desc:'Rigorous testing for flawless, confident releases.' },
+  { n:'04', title:'Consulting', desc:'Strategy and direction for ambitious teams.' },
+];
+const servicesList = document.getElementById('services-list');
+services.forEach((s, i) => {
+  const li = document.createElement('li');
+  li.className = 'service-row-li reveal-up reveal-el';
+  li.dataset.delay = i * 80;
+  li.style.transform = 'translateY(24px)';
+  li.innerHTML = `
+    <a href="#" class="service-row">
+      <span class="service-idx">${s.n}</span>
+      <h3 class="service-title">${s.title}</h3>
+      <p class="service-desc">${s.desc}</p>
+      <span class="service-badge"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></span>
+    </a>`;
+  servicesList.appendChild(li);
+});
+
+/* ---------- stats data ---------- */
+const stats = [
+  { value:150, suffix:'+', label:'Projects delivered' },
+  { value:98, suffix:'%', label:'Client retention' },
+  { value:12, suffix:'', label:'Years of craft' },
+  { value:40, suffix:'+', label:'Team members' },
+];
+const statsGrid = document.getElementById('stats-grid');
+stats.forEach((s, i) => {
+  const li = document.createElement('li');
+  li.className = 'reveal-up reveal-el';
+  li.dataset.delay = i * 90;
+  li.style.transform = 'translateY(20px)';
+  li.innerHTML = `<div class="stat-num"><span class="stat-num-val" data-target="${s.value}">0</span>${s.suffix}</div><div class="stat-label">${s.label}</div>`;
+  statsGrid.appendChild(li);
+});
+
+/* ---------- nav menu items ---------- */
+const navItems = [
+  { n:'01', label:'Home', id:'home' },
+  { n:'02', label:'Work', id:'works' },
+  { n:'03', label:'Services', id:'services' },
+  { n:'04', label:'Studio', id:'about' },
+  { n:'05', label:'Careers', id:'careers' },
+  { n:'06', label:'Contact', id:null },
+];
+const navMenuList = document.getElementById('nav-menu-list');
+navItems.forEach((item, i) => {
+  const li = document.createElement('li');
+  const btn = document.createElement('button');
+  btn.className = 'nav-menu-item';
+  btn.style.transitionDelay = (i * 45 + 80) + 'ms';
+  btn.innerHTML = `<span class="n">${item.n}</span><span class="lbl">${item.label}</span>`;
+  btn.addEventListener('click', () => {
+    closeNav();
+    if (item.id) setTimeout(() => scrollToId(item.id), 320);
+    else setTimeout(openModal, 320);
+  });
+  li.appendChild(btn);
+  navMenuList.appendChild(li);
+});
+
+/* ---------- hero card carousel ---------- */
+const cardItems = [
+  { cap:'Conversion design', title:'Crafted to convert.' },
+  { cap:'Engineering', title:'Built to scale.' },
+  { cap:'Brand systems', title:'Designed to last.' },
+];
+let cardIndex = 0;
+const cardSlot = document.getElementById('hero-card-slot');
+const cardDots = document.getElementById('hero-card-dots');
+cardItems.forEach((_, i) => {
+  const dot = document.createElement('span');
+  if (i === 0) dot.classList.add('active');
+  cardDots.appendChild(dot);
+});
+function renderCard(direction){
+  const existing = cardSlot.querySelector('.hero-card-item');
+  const item = cardItems[cardIndex];
+  const next = document.createElement('div');
+  next.className = 'hero-card-item';
+  next.innerHTML = `<div class="cap">${item.cap}</div><div class="ttl">${item.title}</div>`;
+  if (existing){
+    next.style.transform = `translateY(${direction > 0 ? -14 : 14}px)`;
+    next.style.opacity = '0';
+    cardSlot.appendChild(next);
+    requestAnimationFrame(() => {
+      existing.style.transform = `translateY(${direction > 0 ? 14 : -14}px)`;
+      existing.style.opacity = '0';
+      next.style.transform = 'translateY(0)';
+      next.style.opacity = '1';
+    });
+    setTimeout(() => existing.remove(), 500);
+  } else {
+    cardSlot.appendChild(next);
+    requestAnimationFrame(() => { next.style.opacity = '1'; });
+  }
+  [...cardDots.children].forEach((d, i) => d.classList.toggle('active', i === cardIndex));
+}
+function stepCard(step){
+  cardIndex = (cardIndex + step + cardItems.length) % cardItems.length;
+  renderCard(step);
+}
+renderCard(1);
+document.getElementById('hero-card-click').addEventListener('click', () => stepCard(1));
+document.getElementById('hero-card-next').addEventListener('click', (e) => { e.stopPropagation(); stepCard(1); });
+document.getElementById('hero-card-prev').addEventListener('click', (e) => { e.stopPropagation(); stepCard(-1); });
+
+/* ---------- clock ---------- */
+function updateClock(){
+  const now = new Date();
+  let h = now.getHours();
+  const m = String(now.getMinutes()).padStart(2, '0');
+  const mer = h >= 12 ? 'pm' : 'am';
+  h = h % 12 || 12;
+  const timeStr = `${h}:${m}${mer}`;
+  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const dateStr = `${now.getDate()} ${months[now.getMonth()]}, ${now.getFullYear()}`;
+  const timeEl = document.getElementById('clock-time');
+  const dateEl = document.getElementById('clock-date');
+  if (timeEl) timeEl.textContent = timeStr;
+  if (dateEl) dateEl.textContent = dateStr;
+  const navLocal = document.getElementById('nav-local-time');
+  if (navLocal) navLocal.textContent = `Local time — ${timeStr}`;
+}
+updateClock();
+setInterval(updateClock, 1000);
+
+/* ---------- loader ---------- */
+const FILL_MS = 1300;
+let ready = false;
+function easeInOutCubic(t){ return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2, 3)/2; }
+stopScroll();
+const loaderEl = document.getElementById('loader');
+const loaderFill = document.getElementById('loader-fill');
+const loaderCount = document.getElementById('loader-count');
+const loaderStart = performance.now();
+function loaderTick(now){
+  const t = Math.min((now - loaderStart) / FILL_MS, 1);
+  const progress = Math.round(easeInOutCubic(t) * 100);
+  loaderFill.style.width = progress + '%';
+  loaderCount.textContent = String(progress).padStart(3, '0');
+  if (t < 1) requestAnimationFrame(loaderTick);
+  else finishLoader();
+}
+requestAnimationFrame(loaderTick);
+function finishLoader(){
+  loaderEl.classList.add('exit');
+  setTimeout(() => {
+    ready = true;
+    startScroll();
+    loaderEl.remove();
+    triggerGatedReveals();
+  }, 700);
+}
+
+/* ---------- entrance reveals (gated on ready) ---------- */
+function triggerGatedReveals(){
+  document.getElementById('site-header').classList.add('in');
+  setTimeout(() => document.getElementById('site-header').classList.add('in'), 150);
+  document.querySelectorAll('.reveal-el').forEach(el => {
+    const delay = parseInt(el.dataset.delay || '0', 10);
+    setTimeout(() => {
+      el.classList.add('in');
+      if (el.id === 'hero-h1') revealLines(el);
+    }, delay);
+  });
+}
+
+/* ---------- scroll-triggered reveals (non-hero) ---------- */
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (!entry.isIntersecting) return;
+    const el = entry.target;
+    if (el.classList.contains('line-wrap-host')) revealLines(el);
+    if (el.id === 'about-h2') revealWords(el);
+    if (el.classList.contains('line-wrap') && el.tagName !== 'SPAN') revealLines(el);
+    el.classList.add('in');
+    io.unobserve(el);
+  });
+}, { threshold: 0.2 });
+
+document.querySelectorAll('.reveal-el, .reveal-up, .reveal, h2.line-wrap, #about-h2, .stats-panel').forEach(el => {
+  if (el.id === 'hero-h1') return;
+  if (el.closest('#loader')) return;
+  io.observe(el);
+});
+// About h2 word reveal + line-wrap h2s handled generically above by class checks
+document.getElementById('about-h2').classList.add('in');
+new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting){ revealWords(e.target); e.target._observer && e.target._observer.disconnect(); } });
+}, { threshold: 0.3 }).observe(document.getElementById('about-h2'));
+
+['works-h2','services-h2','stats-h2','footer-h2'].forEach(id => {
+  const el = document.getElementById(id);
+  new IntersectionObserver((entries, obs) => {
+    entries.forEach(e => { if (e.isIntersecting){ revealLines(e.target); obs.disconnect(); } });
+  }, { threshold: 0.2 }).observe(el);
+});
+
+/* ---------- stats count-up on scroll ---------- */
+const statEls = [...document.querySelectorAll('.stat-num-val')];
+let lastStatsThrottle = 0;
+function updateStats(){
+  const now = performance.now();
+  if (now - lastStatsThrottle < 30) return;
+  lastStatsThrottle = now;
+  statEls.forEach(el => {
+    const rect = el.getBoundingClientRect();
+    const vh = window.innerHeight;
+    const start = vh;
+    const end = vh / 2;
+    const target = rect.top + rect.height / 2;
+    let progress = (start - target) / (start - end);
+    progress = Math.max(0, Math.min(1, progress));
+    const value = parseInt(el.dataset.target, 10);
+    el.textContent = Math.round(progress * value);
+  });
+}
+window.addEventListener('scroll', updateStats, { passive: true });
+lenis.on('scroll', updateStats);
+updateStats();
+
+/* ---------- nav overlay ---------- */
+const navMenu = document.getElementById('nav-menu');
+let escHandler = null;
+function openNav(){
+  navMenu.classList.add('open');
+  stopScroll();
+  requestAnimationFrame(() => requestAnimationFrame(() => navMenu.classList.add('in')));
+  escHandler = (e) => { if (e.key === 'Escape') closeNav(); };
+  document.addEventListener('keydown', escHandler);
+}
+function closeNav(){
+  navMenu.classList.remove('in');
+  startScroll();
+  document.removeEventListener('keydown', escHandler);
+  setTimeout(() => navMenu.classList.remove('open'), 550);
+}
+document.querySelectorAll('[data-open-nav]').forEach(b => b.addEventListener('click', openNav));
+document.querySelectorAll('[data-close-nav]').forEach(b => b.addEventListener('click', closeNav));
+document.querySelector('[data-nav-start]').addEventListener('click', () => { closeNav(); setTimeout(openModal, 320); });
+
+/* ---------- request modal ---------- */
+const modal = document.getElementById('request-modal');
+let modalEscHandler = null;
+function openModal(){
+  modal.classList.add('open');
+  stopScroll();
+  requestAnimationFrame(() => requestAnimationFrame(() => modal.classList.add('in')));
+  modalEscHandler = (e) => { if (e.key === 'Escape') closeModal(); };
+  document.addEventListener('keydown', modalEscHandler);
+}
+function closeModal(){
+  modal.classList.remove('in');
+  startScroll();
+  document.removeEventListener('keydown', modalEscHandler);
+  setTimeout(() => {
+    modal.classList.remove('open');
+    document.getElementById('modal-form-state').style.display = '';
+    document.getElementById('modal-success-state').style.display = 'none';
+    document.getElementById('request-form').reset();
+    document.getElementById('modal-submit-label').firstChild.textContent = 'Send request';
+  }, 300);
+}
+document.querySelectorAll('[data-open-modal]').forEach(b => b.addEventListener('click', openModal));
+document.querySelectorAll('[data-close-modal]').forEach(b => b.addEventListener('click', closeModal));
+modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+document.getElementById('modal-panel').addEventListener('click', (e) => e.stopPropagation());
+
+document.getElementById('request-form').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const label = document.getElementById('modal-submit-label');
+  label.firstChild.textContent = 'Sending…';
+  setTimeout(() => {
+    document.getElementById('modal-form-state').style.display = 'none';
+    document.getElementById('modal-success-state').style.display = 'flex';
+  }, 600);
+});
+
+/* ---------- header/nav/scroll routing ---------- */
+document.querySelectorAll('[data-scroll]').forEach(b => {
+  b.addEventListener('click', () => scrollToId(b.dataset.scroll));
+});
+
+/* ---------- LiquidReveal hero ---------- */
+(function(){
+  const container = document.getElementById('liquid-reveal');
+  const canvas = document.getElementById('liquid-canvas');
+  const ctx = canvas.getContext('2d');
+  const beforeSrc = 'https://api.getlayers.ai/storage/v1/object/public/public/assets/lumora-e8b711fc68/hero/after.jpg';
+  const afterSrc = 'https://api.getlayers.ai/storage/v1/object/public/public/assets/lumora-e8b711fc68/hero/before.jpg';
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduceMotion) return;
+
+  const brushRadius = 143;
+  const decay = 0.016;
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+  let coverCanvas = document.createElement('canvas');
+  let coverCtx = coverCanvas.getContext('2d');
+  let brushCanvas = document.createElement('canvas');
+  let brushCtx = brushCanvas.getContext('2d');
+  let afterImg = new Image();
+  afterImg.crossOrigin = 'anonymous';
+  let afterLoaded = false;
+  let W = 0, H = 0;
+
+  function drawCover(){
+    if (!afterLoaded || W === 0 || H === 0) return;
+    coverCanvas.width = W; coverCanvas.height = H;
+    const iw = afterImg.naturalWidth, ih = afterImg.naturalHeight;
+    const scale = Math.max(W / iw, H / ih);
+    const sw = iw * scale, sh = ih * scale;
+    const sx = (W - sw) / 2, sy = (H - sh) / 2;
+    coverCtx.clearRect(0, 0, W, H);
+    coverCtx.drawImage(afterImg, sx, sy, sw, sh);
+  }
+
+  function resize(){
+    const rect = container.getBoundingClientRect();
+    W = Math.round(rect.width * dpr);
+    H = Math.round(rect.height * dpr);
+    canvas.width = W; canvas.height = H;
+    canvas.style.width = rect.width + 'px';
+    canvas.style.height = rect.height + 'px';
+    drawCover();
+    const diam = Math.ceil(brushRadius * dpr * 2);
+    brushCanvas.width = diam; brushCanvas.height = diam;
+  }
+  afterImg.onload = () => { afterLoaded = true; drawCover(); };
+  afterImg.src = afterSrc;
+
+  const ro = new ResizeObserver(resize);
+  ro.observe(container);
+  resize();
+
+  let points = [];
+  let last = null;
+  let idle = 0;
+
+  function toCanvasCoords(clientX, clientY){
+    const rect = container.getBoundingClientRect();
+    return { x: (clientX - rect.left) * dpr, y: (clientY - rect.top) * dpr };
+  }
+
+  window.addEventListener('pointermove', (e) => {
+    const p = toCanvasCoords(e.clientX, e.clientY);
+    const radius = brushRadius * dpr;
+    if (p.x < -radius || p.x > W + radius || p.y < -radius || p.y > H + radius){
+      last = null;
+      return;
+    }
+    if (last){
+      const dx = p.x - last.x, dy = p.y - last.y;
+      const dist = Math.hypot(dx, dy);
+      const step = Math.max(radius * 0.3, 1);
+      const n = Math.min(Math.ceil(dist / step), 60);
+      for (let i = 1; i <= n; i++){
+        points.push({ x: last.x + (dx * i) / n, y: last.y + (dy * i) / n });
+      }
+    } else {
+      points.push(p);
+    }
+    last = p;
+  });
+
+  function stamp(x, y){
+    const radius = brushRadius * dpr;
+    const diam = Math.ceil(radius * 2);
+    brushCtx.clearRect(0, 0, diam, diam);
+    brushCtx.globalCompositeOperation = 'source-over';
+    const grad = brushCtx.createRadialGradient(diam/2, diam/2, 0, diam/2, diam/2, radius);
+    grad.addColorStop(0, 'rgba(255,255,255,1)');
+    grad.addColorStop(0.55, 'rgba(255,255,255,.82)');
+    grad.addColorStop(1, 'rgba(255,255,255,0)');
+    brushCtx.fillStyle = grad;
+    brushCtx.fillRect(0, 0, diam, diam);
+    brushCtx.globalCompositeOperation = 'source-in';
+    brushCtx.drawImage(coverCanvas, x - radius, y - radius, diam, diam, 0, 0, diam, diam);
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.drawImage(brushCanvas, x - radius, y - radius);
+  }
+
+  function tick(){
+    if (W === 0 || H === 0){ requestAnimationFrame(tick); return; }
+    const drawing = points.length > 0;
+    if (drawing) idle = 0;
+    else { idle++; if (idle > 120){ requestAnimationFrame(tick); return; } }
+
+    const fade = drawing ? decay : Math.min(decay + idle * 0.004, 0.5);
+    ctx.globalCompositeOperation = 'destination-out';
+    ctx.fillStyle = `rgba(0,0,0,${fade})`;
+    ctx.fillRect(0, 0, W, H);
+
+    if (drawing){
+      points.forEach(p => stamp(p.x, p.y));
+      points = [];
+    }
+    if (idle === 120){
+      ctx.clearRect(0, 0, W, H);
+    }
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+})();
+</script>
 </body>
 </html>
