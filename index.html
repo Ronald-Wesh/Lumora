@@ -422,6 +422,79 @@ footer{ position:relative; overflow:hidden; border-radius:2rem 2rem 0 0; backgro
 </header>
 
 <main id="main">
+  <section id="home">
+    <div class="liquid-reveal" id="liquid-reveal">
+      <img id="hero-base-img" alt="" src="https://api.getlayers.ai/storage/v1/object/public/public/assets/lumora-e8b711fc68/hero/after.jpg" />
+      <canvas id="liquid-canvas" aria-hidden="true"></canvas>
+    </div>
+    <div class="hero-vignette"></div>
+    <div class="hero-watermark reveal-el" data-delay="300">LUMORA</div>
+
+    <div class="shell hero-content">
+      <div class="hero-left">
+        <div class="eyebrow dark reveal-up reveal-el" data-delay="200"><span class="dot"></span>Independent Studio</div>
+        <h1 class="hero-h1 reveal-el" id="hero-h1" data-delay="250"></h1>
+        <div class="rating-row reveal-up reveal-el" data-delay="650">
+          <span class="stars">
+            <svg class="icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.5l2.9 5.88 6.49.94-4.7 4.58 1.11 6.46L12 17.9l-5.8 3.05 1.1-6.46-4.69-4.58 6.49-.94L12 2.5z"/></svg>
+            <svg class="icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.5l2.9 5.88 6.49.94-4.7 4.58 1.11 6.46L12 17.9l-5.8 3.05 1.1-6.46-4.69-4.58 6.49-.94L12 2.5z"/></svg>
+            <svg class="icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.5l2.9 5.88 6.49.94-4.7 4.58 1.11 6.46L12 17.9l-5.8 3.05 1.1-6.46-4.69-4.58 6.49-.94L12 2.5z"/></svg>
+            <svg class="icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.5l2.9 5.88 6.49.94-4.7 4.58 1.11 6.46L12 17.9l-5.8 3.05 1.1-6.46-4.69-4.58 6.49-.94L12 2.5z"/></svg>
+            <svg class="icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.5l2.9 5.88 6.49.94-4.7 4.58 1.11 6.46L12 17.9l-5.8 3.05 1.1-6.46-4.69-4.58 6.49-.94L12 2.5z"/></svg>
+          </span>
+          <span class="rtext">200+ brands shipped</span>
+        </div>
+        <div class="cta-row reveal-up reveal-el" data-delay="750">
+          <button class="pill-btn" data-open-modal>
+            <span class="pill-inner with-arrow dark">Let's Talk<span class="pill-badge arrow-right"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></span>
+          </button>
+          <button class="pill-btn" data-scroll="works">
+            <span class="pill-inner no-arrow outline">View Work</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="hero-right">
+        <div class="hero-card-wrap reveal-up reveal-el" data-delay="400" id="hero-card-wrap">
+          <div class="hero-card">
+            <div class="hero-card-row" id="hero-card-click">
+              <div class="hero-card-tile"><svg class="icon" viewBox="0 0 48 48" fill="currentColor"><path d="M24 2c2.2 13.8 7.9 19.6 22 22-14.1 2.4-19.8 8.2-22 22-2.2-13.8-7.9-19.6-22-22 14.1-2.4 19.8-8.2 22-22Z"/></svg></div>
+              <div class="hero-card-panel">
+                <div class="hero-card-slot" id="hero-card-slot"></div>
+                <div class="hero-card-bottom">
+                  <div class="hero-card-dots" id="hero-card-dots"></div>
+                  <div class="hero-card-nav">
+                    <button class="prev" id="hero-card-prev" aria-label="Previous"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+                    <button class="next" id="hero-card-next" aria-label="Next"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="partners-wrap reveal-up reveal-el" data-delay="550">
+          <div class="partners-label">Trusted by</div>
+          <div class="partners-grid">
+            <span class="partner-item"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.2" fill="currentColor" stroke="none"/></svg>Kaido</span>
+            <span class="partner-item"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.2" fill="currentColor" stroke="none"/></svg>Northpeak</span>
+            <span class="partner-item"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.2" fill="currentColor" stroke="none"/></svg>Vellum</span>
+            <span class="partner-item"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.2" fill="currentColor" stroke="none"/></svg>Orbit</span>
+            <span class="partner-item"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.2" fill="currentColor" stroke="none"/></svg>Brightline</span>
+            <span class="partner-item"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.2" fill="currentColor" stroke="none"/></svg>Cobalt</span>
+            <span class="partner-item"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.2" fill="currentColor" stroke="none"/></svg>Mesa</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="shell hero-status reveal reveal-el" data-delay="900">
+      <span>Working since 2014</span>
+      <span class="center">Remote-first, worldwide</span>
+      <span class="right">Scroll to explore <span>↓</span></span>
+    </div>
+  </section>
+
 </main>
 </body>
 </html>
