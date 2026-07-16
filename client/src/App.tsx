@@ -1,30 +1,34 @@
-import { useEffect, useState } from 'react'
-import { PageLoader } from '@/components/PageLoader'
-import { Header } from '@/components/Header'
-import { Hero } from '@/components/hero/Hero'
-import { About } from '@/components/sections/About'
-import { CreateBand } from '@/components/sections/CreateBand'
-import { Portfolio } from '@/components/sections/Portfolio'
-import { Services } from '@/components/sections/Services'
-import { Stats } from '@/components/sections/Stats'
-import { Footer } from '@/components/Footer'
-import { ReadyContext } from '@/lib/ready-context'
-import { initLenis } from '@/lib/scroll'
-import { applyAdaptiveGrid } from '@/lib/adaptiveGrid'
+import { useEffect, useState } from "react";
+import { PageLoader } from "@/components/PageLoader";
+import { Header } from "@/components/Header";
+import { Hero } from "@/components/hero/Hero";
+import { About } from "@/components/sections/About";
+import { CreateBand } from "@/components/sections/CreateBand";
+import { Portfolio } from "@/components/sections/Portfolio";
+import { Services } from "@/components/sections/Services";
+import { Stats } from "@/components/sections/Stats";
+import { Footer } from "@/components/Footer";
+import { NavMenu } from "@/components/NavMenu";
+import { RequestModal } from "@/components/RequestModal";
+import { ReadyContext } from "@/lib/ready-context";
+import { initLenis } from "@/lib/scroll";
+import { applyAdaptiveGrid } from "@/lib/adaptiveGrid";
 
 function App() {
-  const [ready, setReady] = useState(false)
-  const [loaderMounted, setLoaderMounted] = useState(true)
+  const [ready, setReady] = useState(false);
+  const [loaderMounted, setLoaderMounted] = useState(true);
+  const [navOpen, setNavOpen] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
-    window.scrollTo(0, 0)
-    initLenis()
-    applyAdaptiveGrid()
-    window.addEventListener('resize', applyAdaptiveGrid)
-    return () => window.removeEventListener('resize', applyAdaptiveGrid)
-  }, [])
+    window.scrollTo(0, 0);
+    initLenis();
+    applyAdaptiveGrid();
+    window.addEventListener("resize", applyAdaptiveGrid);
+    return () => window.removeEventListener("resize", applyAdaptiveGrid);
+  }, []);
 
-  const openModal = () => {}
+  const openModal = () => setModalOpen(true);
 
   return (
     <ReadyContext.Provider value={ready}>
@@ -38,13 +42,13 @@ function App() {
       {loaderMounted && (
         <PageLoader
           onDone={() => {
-            setReady(true)
-            setLoaderMounted(false)
+            setReady(true);
+            setLoaderMounted(false);
           }}
         />
       )}
 
-      <Header onOpenMenu={() => {}} onOpenModal={openModal} />
+      <Header onOpenMenu={() => setNavOpen(true)} onOpenModal={openModal} />
 
       <main id="main">
         <Hero onOpenModal={openModal} />
@@ -56,8 +60,15 @@ function App() {
       </main>
 
       <Footer onOpenModal={openModal} />
+
+      <NavMenu
+        open={navOpen}
+        onClose={() => setNavOpen(false)}
+        onOpenModal={openModal}
+      />
+      <RequestModal open={modalOpen} onClose={() => setModalOpen(false)} />
     </ReadyContext.Provider>
-  )
+  );
 }
 
-export default App
+export default App;
